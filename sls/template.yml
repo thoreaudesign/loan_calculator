@@ -1,0 +1,43 @@
+application/json: '{   "context": {
+                           "path": "$context.path",
+                           "http_method": "$context.httpMethod",
+                           "requestId" : "$context.requestId",
+                           "authNMethod": "$context.authorizer.authNMethod" ,
+                           "clientId": "$context.authorizer.clientId",
+                           "tokenId": "$context.authorizer.tokenId",
+                           "authNTime": "$context.authorizer.authNTime",
+                           "accountNumber": "$context.authorizer.accountNumber",
+                           "principalId": "$context.authorizer.principalId",
+                           "customerGuid": "$context.authorizer.customerGuid",
+                           "webSSOSessionId": "$context.authorizer.webSSOSessionId",
+                           "notBefore": "$context.authorizer.notBefore",
+                           "token": "$context.authorizer.token",
+                           "name": "$context.authorizer.name",
+                           "notOnOrAfter": "$context.authorizer.notOnOrAfter",
+                           "realm": "$context.authorizer.realm",
+                           "scopes": "$context.authorizer.scopes",
+                           "sourceIp" : "$context.identity.sourceIp"
+                       },
+                       "headers": {
+                           #foreach($param in $input.params().header.keySet())
+                           "$param": "$util.escapeJavaScript($input.params().header.get($param))" #if($foreach.hasNext),#end
+
+                           #end
+                       },
+                       "params": {
+                           #foreach($param in $input.params().path.keySet())
+                           "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
+
+                           #end
+                       },
+                       "queryParams": {
+                           #foreach($param in $input.params().querystring.keySet())
+                           "$param": "$util.escapeJavaScript($input.params().querystring.get($param))" #if($foreach.hasNext),#end
+
+                           #end
+                       },
+                       "body" : #if($context.httpMethod != "GET")
+                                $input.json(''$'')
+                                #else null
+                                #end
+                   }'

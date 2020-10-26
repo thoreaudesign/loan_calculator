@@ -1,0 +1,95 @@
+dev:
+  us-east-2:
+    securityGroupIds:
+      - sg-7dcfbb16
+    subnetIds:
+      - subnet-311ae14b
+      - subnet-06aa296e
+    log_level: 10 # debug:10,info:20,warning:30,error:40,critical:50
+    api_url: http://api-dev.sc.xfinity.com
+    ssl_verify: false
+    risk_endpoint: https://risk-staging.comcast.com/v2/cpp/risks
+    backends_sas_url: https://xspcore-api-gateway.xsp.comcast.net/api/security/v1/securityattribute/attributevaluesrole/grandslam/
+    sas_websec_url: https://websec.cable.comcast.com/as/token.oauth2
+    sas_websec_clientId: 'self-service-middleware'
+    sas_websec_clientSecret: ${ssm:websec.self-service-middleware~true}
+    sas_proxy_host: proxy.qa.squid.ecs
+qa:
+  us-east-2:
+    securityGroupIds:
+      - sg-7dcfbb16
+    subnetIds:
+      - subnet-311ae14b
+      - subnet-06aa296e
+    log_level: 10 # debug:10,info:20,warning:30,error:40,critical:50
+    api_url: https://api-qa.sc.xfinity.com
+    ssl_verify: false
+    risk_endpoint: https://risk-staging.comcast.com/v2/cpp/risks
+    backends_sas_url: https://xspcore-api-gateway.xsp.comcast.net/api/security/v1/securityattribute/attributevaluesrole/grandslam/
+    sas_websec_url: https://websec.cable.comcast.com/as/token.oauth2
+    sas_websec_clientId: 'self-service-middleware'
+    sas_websec_clientSecret: ${ssm:websec.self-service-middleware~true}
+    sas_proxy_host: proxy.qa.squid.ecs
+staging:
+  us-east-2:
+    securityGroupIds:
+      - sg-7dcfbb16
+    subnetIds:
+      - subnet-311ae14b
+      - subnet-06aa296e
+    log_level: 10 # debug:10,info:20,warning:30,error:40,critical:50
+    api_url: https://api-staging.sc.xfinity.com
+    ssl_verify: false
+    risk_endpoint: https://risk-staging.comcast.com/v2/cpp/risks
+    backends_sas_url: https://xspcore-api-gateway.xsp.comcast.net/api/security/v1/securityattribute/attributevaluesrole/grandslam/
+    sas_websec_url: https://websec.cable.comcast.com/as/token.oauth2
+    sas_websec_clientId: 'self-service-middleware'
+    sas_websec_clientSecret: ${ssm:websec.self-service-middleware~true}
+    sas_proxy_host: proxy.qa.squid.ecs
+preprod:
+  us-east-1:
+    securityGroupIds:
+      - sg-023b947e
+    subnetIds:
+      - subnet-07ce64a25455f62ef
+      - subnet-0a42eaeea87ce9a7d
+    log_level: 20 # debug:10,info:20,warning:30,error:40,critical:50
+    api_url: https://api-preprod.sc.xfinity.com
+    ssl_verify: true
+    risk_endpoint: https://risk.comcast.com/v2/cpp/risks
+    backends_sas_url: https://xspcore-api-gateway.xsp.comcast.net/api/security/v1/securityattribute/attributevaluesrole/grandslam/
+    sas_websec_url: https://websec.cable.comcast.com/as/token.oauth2
+    sas_websec_clientId: 'self-service-middleware'
+    sas_websec_clientSecret: ${ssm:websec.self-service-middleware~true}
+    sas_proxy_host: proxy.prodeast.squid.ecs
+prod:
+  us-east-1:
+    securityGroupIds:
+      - sg-023b947e
+    subnetIds:
+      - subnet-07ce64a25455f62ef
+      - subnet-0a42eaeea87ce9a7d
+    log_level: 20 # debug:10,info:20,warning:30,error:40,critical:50
+    api_url: https://api.sc.xfinity.com
+    ssl_verify: true
+    risk_endpoint: https://risk.comcast.com/v2/cpp/risks
+    backends_sas_url: https://xspcore-api-gateway.xsp.comcast.net/api/security/v1/securityattribute/attributevaluesrole/grandslam/
+    sas_websec_url: https://websec.cable.comcast.com/as/token.oauth2
+    sas_websec_clientId: 'self-service-middleware'
+    sas_websec_clientSecret: ${ssm:websec.self-service-middleware~true}
+    sas_proxy_host: proxy.prodeast.squid.ecs
+  us-west-2:
+    securityGroupIds:
+      - sg-139ac775
+    subnetIds:
+      - subnet-7f6b2f06
+      - subnet-29deb862
+    log_level: 20 # debug:10,info:20,warning:30,error:40,critical:50
+    api_url: https://api.sc.xfinity.com
+    ssl_verify: true
+    risk_endpoint: https://risk.comcast.com/v2/cpp/risks
+    backends_sas_url: https://xspcore-api-gateway.xsp.comcast.net/api/security/v1/securityattribute/attributevaluesrole/grandslam/
+    sas_websec_url: https://websec.cable.comcast.com/as/token.oauth2
+    sas_websec_clientId: 'self-service-middleware'
+    sas_websec_clientSecret: ${ssm:websec.self-service-middleware~true}
+    sas_proxy_host: proxy.prodwest.squid.ecs

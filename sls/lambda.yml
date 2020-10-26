@@ -1,0 +1,246 @@
+name: ${opt:lambdaName}
+handler: ${opt:snakeName}.handler
+runtime: python3.6
+memorySize: 512
+timeout: 20
+role: arn:aws:iam::294749062442:role/Lambda-execution-Role
+package:
+  artifact: ./${opt:snakeName}.zip
+vpc:
+  securityGroupIds: ${self:custom.stagePrefix.${opt:region}.securityGroupIds}
+  subnetIds: ${self:custom.stagePrefix.${opt:region}.subnetIds}
+tags:
+  DEPLOYED_BY: ${env:USER}
+environment:
+  stage: ${opt:stage}
+  region: ${opt:region}
+  log_level: ${self:custom.stagePrefix.${opt:region}.log_level}
+  api_url: ${self:custom.stagePrefix.${opt:region}.api_url}
+  api_user_context: /user
+  api_auth_context: /auth
+  ssl_verify: ${self:custom.stagePrefix.${opt:region}.ssl_verify}
+  oauth_url: https://oauth.xfinity.com/oauth/token
+  oauth_clientId: 'self-service-middleware'
+  oauth_clientSecret: ${ssm:cima.self-service-middleware~true}
+  oauth_timeout: 5
+  oauth_timeoutBuffer: 3000
+  oauth_grantType: client_credentials
+  risk_endpoint: ${self:custom.stagePrefix.${opt:region}.risk_endpoint}
+  risk_threshold_origin: "US"
+  risk_threshold_score: 70
+  risk_threshold_exceeded_message: "Threshold Exceeded."
+
+  backends_sas_url: ${self:custom.stagePrefix.${opt:region}.backends_sas_url}
+  backends_sas_sourceServerId: Self-Service-Middleware
+  backends_sas_sourceSystemId: Self-Service-Middleware
+
+  sas_websec_url: ${self:custom.stagePrefix.${opt:region}.sas_websec_url}
+  sas_websec_clientId: ${self:custom.stagePrefix.${opt:region}.sas_websec_clientId}
+  sas_websec_clientSecret: ${self:custom.stagePrefix.${opt:region}.sas_websec_clientSecret}
+  sas_websec_grantType: client_credentials
+  sas_websec_scope: 'esp:sps'
+  sas_websec_timeout: 20
+  sas_websec_timeoutBuffer: 3000
+  sas_proxy_host: ${self:custom.stagePrefix.${opt:region}.sas_proxy_host}
+  sas_proxy_port: 3128
+  sas_whitelisted_roles: 'Einstein Privacy'
+layers:
+  - arn:aws:lambda:${opt:region}:294749062442:layer:corepy:${self:custom.corepy_version.${opt:region}}
+  - arn:aws:lambda:${opt:region}:294749062442:layer:cpp-base:${self:custom.cpp_base_version.${opt:region}}
+events:
+  - http:
+      path: /session
+      method: POST
+      cors:
+        origin: '*'
+        headers:
+          - Authorization
+          - Content-Type
+          - X-Amz-Date
+          - X-Api-Key
+          - X-Amz-Security-Token
+          - X-CPP-Token
+      integration: lambda-proxy
+      request:
+          parameters:
+              headers:
+                  Authorization: true
+          passThrough: WHEN_NO_TEMPLATES
+          template: ${file(./sls/template.yml)}
+      response: ${file(./sls/response.yml)}
+  - http:
+      path: /session
+      method: PATCH
+      cors:
+        origin: '*'
+        headers:
+          - Authorization
+          - Content-Type
+          - X-Amz-Date
+          - X-Api-Key
+          - X-Amz-Security-Token
+          - X-CPP-Token
+      integration: lambda-proxy
+      request:
+          parameters:
+              headers:
+                  Authorization: true
+          passThrough: WHEN_NO_TEMPLATES
+          template: ${file(./sls/template.yml)}
+      response: ${file(./sls/response.yml)}
+  - http:
+      path: /session
+      method: DELETE
+      cors:
+        origin: '*'
+        headers:
+          - Authorization
+          - Content-Type
+          - X-Amz-Date
+          - X-Api-Key
+          - X-Amz-Security-Token
+          - X-CPP-Token
+      integration: lambda-proxy
+      request:
+          parameters:
+              headers:
+                  Authorization: true
+          passThrough: WHEN_NO_TEMPLATES
+          template: ${file(./sls/template.yml)}
+      response: ${file(./sls/response.yml)}
+  - http:
+      path: /session
+      method: ANY
+      cors:
+          origin: '*'
+          headers:
+            - Authorization
+            - Content-Type
+            - X-Amz-Date
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-CPP-Token
+      integration: mock
+      request:
+          passThrough: WHEN_NO_TEMPLATES
+          template:
+              application/json: '{"statusCode": 403}'
+      response:
+          headers:
+              Content-Type: "'application/json'"
+          template: '{"message": "Forbidden"}'
+          statusCodes:
+              403:
+                  pattern: '' # Default response method
+  - http:
+      path: /session/refresh
+      method: GET
+      cors:
+        origin: '*'
+        headers:
+          - Authorization
+          - Content-Type
+          - X-Amz-Date
+          - X-Api-Key
+          - X-Amz-Security-Token
+          - X-CPP-Token
+      integration: lambda-proxy
+      request:
+          parameters:
+              headers:
+                  Authorization: true
+          passThrough: WHEN_NO_TEMPLATES
+          template: ${file(./sls/template.yml)}
+      response: ${file(./sls/response.yml)}
+  - http:
+      path: /session/refresh
+      method: ANY
+      cors:
+          origin: '*'
+          headers:
+            - Authorization
+            - Content-Type
+            - X-Amz-Date
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-CPP-Token
+      integration: mock
+      request:
+          passThrough: WHEN_NO_TEMPLATES
+          template:
+              application/json: '{"statusCode": 403}'
+      response:
+          headers:
+              Content-Type: "'application/json'"
+          template: '{"message": "Forbidden"}'
+          statusCodes:
+              403:
+                  pattern: '' # Default response method
+  - http:
+      path: /session/jwks
+      method: GET
+      cors:
+        origin: '*'
+        headers:
+          - Authorization
+          - Content-Type
+          - X-Amz-Date
+          - X-Api-Key
+          - X-Amz-Security-Token
+          - X-CPP-Token
+      integration: lambda-proxy
+      request:
+          parameters:
+              headers:
+                  Authorization: true
+          passThrough: WHEN_NO_TEMPLATES
+          template: ${file(./sls/template.yml)}
+      response: ${file(./sls/response.yml)}
+  - http:
+      path: /session/jwk
+      method: ANY
+      cors:
+          origin: '*'
+          headers:
+            - Authorization
+            - Content-Type
+            - X-Amz-Date
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-CPP-Token
+      integration: mock
+      request:
+          passThrough: WHEN_NO_TEMPLATES
+          template:
+              application/json: '{"statusCode": 403}'
+      response:
+          headers:
+              Content-Type: "'application/json'"
+          template: '{"message": "Forbidden"}'
+          statusCodes:
+              403:
+                  pattern: '' # Default response method
+  - http:
+      path: /session/{proxy+}
+      method: ANY
+      cors:
+          origin: '*'
+          headers:
+            - Authorization
+            - Content-Type
+            - X-Amz-Date
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-CPP-Token
+      integration: mock
+      request:
+          passThrough: WHEN_NO_TEMPLATES
+          template:
+              application/json: '{"statusCode": 403}'
+      response:
+          headers:
+              Content-Type: "'application/json'"
+          template: '{"message": "Forbidden"}'
+          statusCodes:
+              403:
+                  pattern: '' # Default response method

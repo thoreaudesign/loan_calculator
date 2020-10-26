@@ -1,0 +1,43 @@
+service: ${opt:camelName}
+provider:
+  name: aws
+  endpointType: REGIONAL
+  versionFunctions: false
+  stackTags:
+     Owner: Self-Service-Middleware
+     Name: ${self:service}
+  apiGateway:
+    restApiId:
+      'Fn::ImportValue': ${opt:stage}-CPPApiGateway-restApiId
+    restApiRootResourceId:
+      'Fn::ImportValue': ${opt:stage}-CPPBase-rootResourceId
+
+custom:
+  # Configure autoscaling for Dynamodb
+  dynamodbAutoscaling:
+    iamRoleArn: "arn:aws:iam::294749062442:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+    tablesConfig:
+      CPPDynamodbTable: true
+  stagePrefix: ${file(./sls/region.yml):${opt:stage}}
+  # Configure corepy layer version
+  corepy_version:
+      us-east-2: 45  # lower environments
+      us-east-1: 23  # production east
+      us-west-2: 23  # production west
+  cpp_base_version:
+      us-east-2: 85  # lower environments
+      us-east-1: 24  # production east
+      us-west-2: 24  # production west
+
+plugins:
+  - serverless-fix-apigw-int
+  - serverless-plugin-dynamodb-autoscaling
+  - serverless-plugin-git-variables
+package:
+  individually: true
+
+functions:
+  CPPLambda: ${file(./sls/lambda.yml)}
+
+resources:
+  Resources: ${file(./sls/resources.yml)}

@@ -1,0 +1,21 @@
+CPPLogGroup:
+  Type: AWS::Logs::LogGroup
+  Properties:
+    RetentionInDays: "7"
+CPPDynamodbTable:
+  Type: "AWS::DynamoDB::Table"
+  Properties:
+    AttributeDefinitions:
+      - AttributeName: session_id
+        AttributeType: S
+    BillingMode: PROVISIONED
+    KeySchema:
+      - AttributeName: session_id
+        KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 5
+      WriteCapacityUnits: 5
+    TableName: ssm-${opt:stage}-cppsession
+    TimeToLiveSpecification:
+      AttributeName: ttl
+      Enabled: true

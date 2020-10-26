@@ -1,0 +1,33 @@
+headers:
+  Content-Type: "'application/json'"
+statusCodes:
+  200:
+    pattern: '' # Default response method
+  400:
+    pattern: '.*badrequest:.*'
+    template:
+      application/json: "$input.path('$.errorMessage')"
+  403:
+    pattern: '.*forbidden:.*'
+    template:
+      application/json: "$input.path('$.errorMessage')"
+  404:
+    pattern: '.*not_found:.*'
+    template:
+      application/json: "$input.path('$.errorMessage')"
+  429:
+    pattern: '.*toomanyrequests:.*'
+    template:
+      application/json: "$input.path('$.errorMessage')"
+  500:
+    pattern: '.*internalerror:.*'
+    template:
+      application/json: "$input.path('$.errorMessage')"
+  503:
+    pattern: '.*gatewayerror:.*'
+    template:
+      application/json: "$input.path('$.errorMessage')"
+  504:
+    pattern: '.*timeout.*|.*timed out.*'
+    template:
+      application/json: "$input.path('$.errorMessage')"
